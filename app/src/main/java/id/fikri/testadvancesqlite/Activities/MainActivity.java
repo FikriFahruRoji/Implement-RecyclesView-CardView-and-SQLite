@@ -17,9 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
                 View promptView = layoutInflater.inflate(R.layout.custom_input_dialog, null);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setTitle("Add student");
                 alertDialogBuilder.setView(promptView);
 
                 final EditText editId = (EditText) promptView.findViewById(R.id.edit_id);
@@ -60,8 +58,13 @@ public class MainActivity extends AppCompatActivity {
                                 String studId =  editId.getText().toString();
                                 String name =  editName.getText().toString();
                                 String surename =  editSurename.getText().toString();
-                                myDB.save_table_student(studId, name, surename);
-                                getDB();
+                                boolean a = myDB.save_table_student(studId, name, surename);
+                                if (a == true) {
+                                    Toast.makeText(MainActivity.this, "Success add data Student", Toast.LENGTH_LONG).show();
+                                    getDB();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Error add data Student", Toast.LENGTH_LONG).show();
+                                }
                             }
                         })
                         .setNegativeButton("Cancel",
@@ -87,29 +90,84 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+        getDB();
+
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
-            public void onClick(View view, int position) {
-                ModelStudents movie = studentsList.get(position);
-                Toast.makeText(getApplicationContext(), movie.getId() + " is selected!", Toast.LENGTH_SHORT).show();
+            public void onClick(View view, final int position) {
+                ModelStudents students = studentsList.get(position);
+
+                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+                View promptView = layoutInflater.inflate(R.layout.custom_input_dialog, null);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setTitle("Update student");
+                alertDialogBuilder.setView(promptView);
+
+                final EditText editName = (EditText) promptView.findViewById(R.id.edit_name);
+                final EditText editId = (EditText) promptView.findViewById(R.id.edit_id);
+                final EditText editSurename = (EditText) promptView.findViewById(R.id.edit_surename);
+
+                // setup a dialog window
+                editId.setText(students.getId());
+                editId.setEnabled(false);
+                editName.setText(students.getName());
+                editSurename.setText(students.getSurename());
+
+                alertDialogBuilder.setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                myDB.update_table_student(String.valueOf(position), editName.getText().toString(), editSurename.getText().toString());
+                                getDB();
+                            }
+                        })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create an alert dialog
+                AlertDialog alert = alertDialogBuilder.create();
+                alert.show();
             }
 
             @Override
             public void onLongClick(View view, int position) {
+                final  ModelStudents students = studentsList.get(position);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                alertDialogBuilder.setTitle("Delete student");
+                alertDialogBuilder.setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                myDB.delete_student(students.getId());
+                                getDB();
+                            }
+                        })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create an alert dialog
+                AlertDialog alert = alertDialogBuilder.create();
+                alert.show();
 
             }
         }));
-        getDB();
     }
 
     private void getDB(){
+        studentsList.clear();
         Cursor students = myDB.list_table_student();
         if (students.getCount() == 0) {
             alert_message("Message", "No data student found");
             return;
         }
         //append data student to buffer
-        studentsList.clear();
         while (students.moveToNext()) {
             ModelStudents movie = new ModelStudents(students.getString(0), students.getString(1), students.getString(2));
             studentsList.add(movie);
