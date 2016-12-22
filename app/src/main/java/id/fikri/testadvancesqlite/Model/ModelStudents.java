@@ -10,10 +10,10 @@ public class ModelStudents {
     public ModelStudents() {
     }
 
-    public ModelStudents(String title, String genre, String year) {
-        this.id = title;
-        this.name = genre;
-        this.surename = year;
+    public ModelStudents(String id, String name, String surename) {
+        this.id = id;
+        this.name = name;
+        this.surename = surename;
     }
 
     public String getId() {

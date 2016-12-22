@@ -1,4 +1,4 @@
-package id.fikri.testadvancesqlite.Helper;
+package id.fikri.testadvancesqlite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String col_surename = "SURNAME";
 
     public static final String table_create_student = "CREATE TABLE " + table_students + " ( " +
-            col_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            col_id + " INT PRIMARY KEY, " +
             col_name + " TEXT, " +
             col_surename + " TEXT);";
 
@@ -38,9 +38,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean save_table_student(String name, String surname, String marks) {
+    public boolean save_table_student(String id, String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues content_values = new ContentValues();
+        content_values.put(col_id, id);
         content_values.put(col_name, name);
         content_values.put(col_surename, surname);
         long result = db.insert(table_students, null, content_values);
@@ -53,13 +54,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return students;
     }
 
-    public boolean update_table_student(String id, String name, String surname, String marks) {
+    public boolean update_table_student(String id, String name, String surname) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues content_values = new ContentValues();
         content_values.put(col_id, id);
         content_values.put(col_name, name);
         content_values.put(col_surename, surname);
-        db.update(table_students, content_values, "ID = ? ", new String[]{id});
+        db.update(table_students, content_values, "name = ? ", new String[]{id});
         return true;
     }
 

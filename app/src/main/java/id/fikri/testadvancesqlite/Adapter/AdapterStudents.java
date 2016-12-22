@@ -17,7 +17,7 @@ import id.fikri.testadvancesqlite.R;
 
 public class AdapterStudents extends RecyclerView.Adapter<AdapterStudents.MyViewHolder> {
 
-    private List<ModelStudents> moviesList;
+    private List<ModelStudents> studentsList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView id, name, surename;
@@ -32,7 +32,7 @@ public class AdapterStudents extends RecyclerView.Adapter<AdapterStudents.MyView
 
 
     public AdapterStudents(List<ModelStudents> moviesList) {
-        this.moviesList = moviesList;
+        this.studentsList = moviesList;
     }
 
     @Override
@@ -43,14 +43,14 @@ public class AdapterStudents extends RecyclerView.Adapter<AdapterStudents.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        ModelStudents movie = moviesList.get(position);
-        holder.id.setText(movie.getId());
-        holder.name.setText(movie.getName());
-        holder.surename.setText(movie.getSurename());
+        ModelStudents student = studentsList.get(position);
+        holder.id.setText(student.getId());
+        holder.name.setText(student.getName());
+        holder.surename.setText(student.getSurename());
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return studentsList.size();
     }
 }
