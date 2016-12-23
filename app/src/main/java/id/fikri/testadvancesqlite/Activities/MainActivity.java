@@ -109,15 +109,20 @@ public class MainActivity extends AppCompatActivity {
 
                 // setup a dialog window
                 editId.setText(students.getId());
-                editId.setEnabled(false);
                 editName.setText(students.getName());
                 editSurename.setText(students.getSurename());
+
+                final boolean a = myDB.update_table_student(String.valueOf(position), editName.getText().toString(), editSurename.getText().toString());
 
                 alertDialogBuilder.setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                myDB.update_table_student(String.valueOf(position), editName.getText().toString(), editSurename.getText().toString());
-                                getDB();
+                                if (a == true) {
+                                    Toast.makeText(MainActivity.this, "Update success", Toast.LENGTH_SHORT).show();
+                                    getDB();
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Update fail", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         })
                         .setNegativeButton("Cancel",
